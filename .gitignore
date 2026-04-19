@@ -1,0 +1,11 @@
+.DS_Store
+.env
+*.log
+
+# 测试中可能生成的真实用户数据——别提交进 repo
+first-look-config.md
+conversations.json
+conversations.jsonl
+
+# 备份文件（install.sh 跑"备份后覆盖"会产生）
+*.backup.*
