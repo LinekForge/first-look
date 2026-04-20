@@ -343,8 +343,16 @@ fi
 ok "配置写好了"
 
 # ————————————————————————
-# 启动 Claude Code
+# 收尾 · 告诉用户下一步
 # ————————————————————————
+#
+# 设计决定：不在这里 `exec claude` 自动启动 Claude Code。
+# 理由：某些终端下 TTY 交接（exec claude < "$TTY"）会失效,
+# 表现为 CC 界面已渲染但键盘无响应,用户只能 Cmd+Q 关终端重开。
+# 与其修 fragile 的 TTY 交接,不如把启动控制权完全交给用户——
+# 打印清晰的下一步,让她主动敲 `claude` 回车。TTY 问题根除,
+# 流程可预测性提升,和 first-look 的"复杂度我们吃,她看到的
+# 是陪伴"原则一致。
 
 printf '\n'
 
@@ -356,12 +364,11 @@ if ! command -v claude >/dev/null 2>&1; then
     info "回到你的 chatbox，告诉它「claude 命令没找到」，它会帮你装或者修 PATH。"
     info ""
     info "装好之后，在终端里跑 claude 就能见面了。"
-    # 用 exit 2 表示"部分完成"——配置写了但没启动。
-    # 调用者可以区分"全部 OK（exit 0）"和"写了但没起来（exit 2）"。
+    # 用 exit 2 表示"部分完成"——配置写了但 claude 命令没找到。
     exit 2
 fi
 
-# 打印开场白，然后启动 CC
+# 打印开场白(如果有)
 if [[ -n "$GREETING" ]]; then
     printf '%s─────────────────────────────────────%s\n' "$CYAN" "$RESET"
     printf '%s\n' "$GREETING"
@@ -369,13 +376,8 @@ if [[ -n "$GREETING" ]]; then
     printf '\n'
 fi
 
-prompt_continue "按回车，打开 Claude Code"
-
-printf '\n'
-
-# 友好提示：个别终端下 TTY 交接可能失效（键盘无响应）
-info "（如果启动后键盘没反应，按 Ctrl+C 退出，然后在终端直接输入 claude 回车——第二次通常正常。）"
-printf '\n'
-
-# 把键盘 stdin 交给 claude
-exec claude < "$TTY"
+# 清晰的下一步指引 —— 用户自己敲 claude 启动
+printf '%s  ✓ 配置都写好了。%s\n\n' "$BOLD$GREEN" "$RESET"
+printf '  下一步 · 在这个终端里输入这一行,打开 Claude Code:\n\n'
+printf '%s      claude%s\n\n' "$BOLD" "$RESET"
+printf '%s  (敲完回车,CC 就启动了,然后回到 chatbox 继续。)%s\n\n' "$DIM" "$RESET"
