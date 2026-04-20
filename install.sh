@@ -254,7 +254,7 @@ fi
 
 # memory 目录：~/.claude/projects/-Users-{whoami}/memory
 HOME_ENCODED=${HOME//\//-}
-MEMORY_DIR="$HOME/.claude/projects$HOME_ENCODED/memory"
+MEMORY_DIR="$HOME/.claude/projects/$HOME_ENCODED/memory"
 
 # 检测已有配置（CLAUDE.md 或 memory 目录里有 .md 文件——任一存在都要询问）
 # 只看 .md，避免 .DS_Store 等隐藏元文件触发假警告
