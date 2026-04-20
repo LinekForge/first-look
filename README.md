@@ -110,7 +110,7 @@ first-look **不预装** Hub。要不要装、什么时候装，由她和 CC 决
 
 ## 贡献者
 
-- @jamiekya — install.sh memory 路径 bug 诊断（#3）
+- [@jamiekya](https://github.com/jamiekya) — install.sh memory 路径 bug 诊断（[#3](https://github.com/LinekForge/first-look/issues/3)）
 
 ---
 
