@@ -110,11 +110,10 @@ Windows 有两道安全闸会挡 `.ps1` 脚本，**两道都要过**：
 **两道闸都过了，开跑**：
 
 > ```powershell
-> cd $env:USERPROFILE\Desktop
-> .\install.ps1 .\first-look-config.md
+> & $env:USERPROFILE\Desktop\install.ps1 $env:USERPROFILE\Desktop\first-look-config.md
 > ```
 >
-> 第一行切到桌面目录（`cd` = change directory），第二行跑脚本。前面的 `.\` 必须有——PowerShell 安全策略不让你直接跑当前目录的脚本，`.\` 是在说"是的我故意要跑这个"。
+> 用绝对路径跑脚本——**不要先 `cd Desktop`**。因为 Claude Code 启动时按当前目录找 memory,如果她从 Desktop 启动 `claude`,CC 会找 Desktop 对应的 memory 目录,读不到家目录的配置。**保持在家目录跑脚本 + 启动 CC 最稳**。
 >
 > 脚本做的事和 Mac 版一模一样：读配置 → 解析 → 写到 `C:\Users\你\.claude\` → 打印一句话 → 告诉你输入 `claude` 启动 CC。脚本内部会自动找 Git Bash 调 `install.sh`——你不用开 Git Bash。
 

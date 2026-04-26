@@ -129,12 +129,20 @@ write_bundle_file() {
     # 特殊文件：first-look-starter-tasks.md（开局任务清单，保存到桌面，不写入 memory）
     # 她可以随时打开翻看，破冰阶段挑一个开始
     if [[ "$filename" == "first-look-starter-tasks.md" ]]; then
-        local tasks_path="$HOME/Desktop/first-look-starter-tasks.md"
-        # 同 greeting：strip 控制字符防终端被操控（这个文件用户会在编辑器里打开，但保险起见）
+        local tasks_dir="$HOME/Desktop"
+        # Desktop 目录可能不存在(某些 Linux / 精简 macOS 环境)
+        if [[ ! -d "$tasks_dir" ]]; then
+            tasks_dir="$HOME"
+        fi
+        local tasks_path="$tasks_dir/first-look-starter-tasks.md"
         local clean_tasks
         clean_tasks=$(printf '%s' "$content" | LC_ALL=C tr -d '\000-\010\013\014\016-\037')
-        printf '%s\n' "$clean_tasks" > "$tasks_path"
-        ok "开局任务清单已存到桌面：$tasks_path"
+        if ! printf '%s\n' "$clean_tasks" > "$tasks_path" 2>/dev/null; then
+            warn "开局任务清单写入失败：$tasks_path"
+            SKIPPED_FILES+=("$filename")
+            return 1
+        fi
+        ok "开局任务清单已存到：$tasks_path"
         return
     fi
 
@@ -154,7 +162,11 @@ write_bundle_file() {
         target="$MEMORY_DIR/$filename"
     fi
 
-    printf '%s\n' "$content" > "$target"
+    if ! printf '%s\n' "$content" > "$target" 2>/dev/null; then
+        err "写入失败：$target"
+        SKIPPED_FILES+=("$filename")
+        return 1
+    fi
     ok "写入 $target"
 }
 
@@ -282,10 +294,15 @@ if (( existing_claude || existing_memory )); then
         done
     fi
     info ""
-    info "  [O] 覆盖（CLAUDE.md 替换，memory 目录直接覆盖同名文件）"
-    info "  [B] 备份后覆盖（旧 CLAUDE.md 和整个 memory 目录都备份到 .backup.{时间}）"
+    if (( existing_memory )); then
+        warn "注意：新配置中不存在的旧 memory 文件会留在原位。"
+        info "  如果你想完全干净地重来，建议选 [B] 备份，再手动清理旧文件。"
+        info ""
+    fi
+    info "  [B] 备份后继续（推荐 · 旧文件备份到 .backup.{时间}，新文件写入）"
+    info "  [O] 直接覆盖（同名文件替换，不同名的旧文件保留）"
     info "  [Q] 退出（不做任何改动）"
-    printf '  %s选择 [O/B/Q]:%s ' "$BOLD" "$RESET"
+    printf '  %s选择 [B/O/Q]（直接回车 = 退出）:%s ' "$BOLD" "$RESET"
     if ! read -r existing_choice < "$TTY"; then
         err "无法读取你的选择。为安全起见，退出，不改动原配置。"
         exit 1
@@ -302,17 +319,17 @@ if (( existing_claude || existing_memory )); then
             fi
             if (( existing_memory )); then
                 backup_dir="${MEMORY_DIR}.backup.$ts"
-                # -P 保留 symlink 不跟随，避免意外把 symlink 指向的外部内容拷进备份
                 cp -RP "$MEMORY_DIR" "$backup_dir"
                 ok "旧 memory 目录已备份到 ${backup_dir}"
             fi
             ;;
-        [Qq])
-            info "好，不改。现在退出。"
-            exit 0
+        [Oo])
+            info "继续，同名文件覆盖，不同名旧文件保留。"
             ;;
         *)
-            info "继续，将覆盖当前配置。"
+            # 空输入、Q、未知输入 → 默认退出（保护已有配置）
+            info "好，不改。现在退出。"
+            exit 0
             ;;
     esac
     printf '\n'

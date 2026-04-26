@@ -31,7 +31,7 @@
 4. 读用户桌面的 `first-look-config.md`
 5. 解析合并文本块，拆成 `CLAUDE.md` 和若干 memory 文件
 6. 写到 `~/.claude/` 和 `~/.claude/projects/-Users-{用户名}/memory/`
-7. 打印开场白，启动 Claude Code
+7. 打印开场白，提示用户手动输入 `claude` 启动
 
 ---
 
@@ -44,7 +44,7 @@
 3. **幂等询问**：如果已有 `~/.claude/CLAUDE.md`，问用户要覆盖 / 备份后覆盖 / 退出
 4. **解析和写入**：按分隔符拆文件，写到 `~/.claude/` 下的对应位置
 5. **打印开场白**：如果配置里含 `first_greeting.txt`，打印到终端
-6. **启动 Claude Code**：`exec claude`
+6. **提示用户启动**：打印"下一步 · 输入 `claude` 回车"（不自动启动,把控制权交给用户）
 
 **明确不做的事**：
 - 不联网下载任何东西（Bun / CC 的安装由 chatbox 带用户用 Homebrew 做，不在脚本里）
@@ -86,12 +86,35 @@ first-look 本身不运行任何服务器。用户机器上的所有操作都是
 
 ## 数据流向
 
-**装机阶段**：
+**承接路径**（如果用户选择上传 claude.ai / ChatGPT 等的聊天记录导出）：
 
 ```
+用户在 claude.ai 导出聊天记录 zip
+   ↓  上传给当前 chatbox（Claude Desktop / claude.ai / 其他）
+chatbox 分析聊天记录,提取画像
+   ↓  聊天记录内容由 chatbox provider 的 API 处理
 chatbox 生成配置（md 文件）
    ↓  用户下载到桌面
 ~/.claude/ （本地磁盘）  ← install.sh 读文件、写入
+```
+
+**注意**：承接路径中,用户的**历史聊天记录**（可能含高度私密信息、第三方真名、凭据片段）会被**当前 chatbox provider 的 API 接收并处理**。first-look 本身不接收、不存储这些数据——但用户选择的 chatbox provider（如 Anthropic / OpenAI）会按其自身的隐私政策处理上传内容。
+
+**访谈路径**（用户选择"从新开始"）：
+
+```
+chatbox 和用户对话,用户自己口述信息
+   ↓  对话内容由 chatbox provider 的 API 处理
+chatbox 生成配置（md 文件）
+   ↓  用户下载到桌面
+~/.claude/ （本地磁盘）  ← install.sh 读文件、写入
+```
+
+**装机阶段**：
+
+```
+chatbox 指引用户装 Xcode CLT / 代理 / Homebrew / CC（全部官方工具）
+install.sh 读配置 → 写入 ~/.claude/
 ```
 
 **不经过**：first-look 维护者的任何服务器（因为不存在）。

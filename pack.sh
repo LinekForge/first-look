@@ -25,6 +25,11 @@ done
 
 OUT="${OUT:-$HOME/Desktop/first-look-发行包}"
 
+# 目标目录如果已存在,先清空(避免旧文件残留污染发行包)
+if [[ -d "$OUT" ]]; then
+    echo "  ⚠ 目标目录已存在,清空后重新打包: $OUT"
+    rm -rf "$OUT"
+fi
 mkdir -p "$OUT"
 
 # guide/ 下的 step 文件提到根——flat 结构让用户不用进目录找
@@ -39,6 +44,7 @@ cp "$REPO_DIR/guide/step-4-7-安装启动.md" "$OUT/"
 cp "$REPO_DIR/给你自己看.md" "$OUT/"
 cp "$REPO_DIR/install.sh" "$OUT/"
 cp "$REPO_DIR/install.ps1" "$OUT/"
+cp "$REPO_DIR/SECURITY.md" "$OUT/"
 
 echo ""
 echo "✓ 发行包已打到: $OUT"
