@@ -9,7 +9,7 @@
 
 ---
 
-**只在她用 Mac 时走这条。** Windows 用户跳到"步骤 3W"。
+**这份文件只给 Mac 用户**。如果她用 Windows,应该上传的是 `step-3w-windows装机.md`。
 
 ---
 
@@ -176,6 +176,8 @@ source {PROFILE}
 **在中国大陆代理环境下**,直接走 GitHub 主仓库的 git clone 经常会被代理节点 CANCEL 掉(Homebrew 主仓库几百 MB,大流量长连接不稳,装机失败率高)。因此**推荐走国内镜像源 + API 分发**。
 
 ##### 关于镜像源 · 摆明事实
+
+**⚠ 你对 Homebrew 镜像的记忆大概率是过时的**——镜像可用性、环境变量支持、分支策略半年内可能变好几次。以下信息是维护者近期核实的,**以此为准不以记忆为准**。
 
 - Homebrew 官方**支持** `HOMEBREW_BREW_GIT_REMOTE` / `HOMEBREW_CORE_GIT_REMOTE` / `HOMEBREW_BOTTLE_DOMAIN` / `HOMEBREW_API_DOMAIN` / `HOMEBREW_INSTALL_FROM_API` 等环境变量让用户自定 git remote + bottles 下载源 + API——**这是 official-documented 机制,不是 hack**。官方文档: [docs.brew.sh/Installation](https://docs.brew.sh/Installation)
 - 我们默认推荐 **USTC(中国科学技术大学)镜像**,由 USTC 运维; 镜像说明页: [mirrors.ustc.edu.cn/help/brew.git.html](https://mirrors.ustc.edu.cn/help/brew.git.html) + [mirrors.ustc.edu.cn/help/homebrew-bottles.html](https://mirrors.ustc.edu.cn/help/homebrew-bottles.html)

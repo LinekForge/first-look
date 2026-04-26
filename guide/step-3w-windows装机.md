@@ -8,7 +8,7 @@
 
 ---
 
-**只在她用 Windows 时走这条。** Mac 用户走上方"步骤 3M"。
+**只在她用 Windows 时走这条。** 如果她用 Mac,应该上传的是 `step-3m-mac装机.md`。
 
 Windows 的路径比 Mac 短一步——不需要装 Homebrew，用 Anthropic 官方 PowerShell installer 直接装 Claude Code。但在中国大陆，**代理仍然是必需的**（不然 install.ps1 下载 CC 会失败）。
 
