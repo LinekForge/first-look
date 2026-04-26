@@ -6,6 +6,7 @@
 > - 求稳 ≠ 求对 · 用户的朴素直觉值得被验证
 > - 看到 `SSL_ERROR_SYSCALL` → 默认假设代理 MITM，先看 `no_proxy`
 > - 诊断看完整 transcript，不看末尾几行
+> - **如有必要,realtime 搜索** · 本文件比你的记忆新,但也可能过时
 
 ---
 
